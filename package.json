@@ -1,0 +1,27 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Helen Kwok",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helenkwok/Full-Stack-Open-Part3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helenkwok/Full-Stack-Open-Part3/issues"
+  },
+  "homepage": "https://github.com/helenkwok/Full-Stack-Open-Part3#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.18"
+  }
+}
