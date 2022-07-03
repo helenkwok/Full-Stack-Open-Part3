@@ -10,9 +10,9 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
     if (persons.filter(person => person.name === newName).length === 0) {
       const personObject = {
         name: newName,
-        number: newNumber,
-        id: persons.length + 1
+        number: newNumber
       }
+
       personService
         .create(personObject)
         .then(response => {
