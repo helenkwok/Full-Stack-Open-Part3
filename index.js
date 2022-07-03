@@ -28,32 +28,17 @@ app.get('/api/persons', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).json({
-      error: 'person not found'
-    }).end()
-  }
+  }).catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-
-  if (persons.filter(person => person.id === id).length !== 0) {
-    persons = persons.filter(person => person.id !== id)
+  Person.findByIdAndRemove(request.params.id).then(result => {
     response.status(204).end()
-  } else {
-    response.status(404).json({
-      error: 'person not found'
-    }).end()
-  }
+  })
+  .catch(error => next(error))
 })
-
-const generatedID = () => Math.floor(Math.random() * 1000000000)
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -64,20 +49,14 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  if (persons.filter(person => person.name.toLowerCase() === body.name.toLowerCase()).length > 0) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-
-  const person = {
-    id: generatedID(),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
+  })
 
-  persons = persons.concat(person)
-  response.json(person)
+  person.save().then(savedPerson => {
+    response.json(savedPerson)
+  })
 })
 
 const unknownEndpoint = (request, response) => {
