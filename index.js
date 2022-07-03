@@ -96,6 +96,8 @@ app.post('/api/persons', (request, response) => {
   response.json(person)
 })
 
+app.use(express.static('build'))
+
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' })
 }
