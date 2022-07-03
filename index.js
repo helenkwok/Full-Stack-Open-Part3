@@ -1,7 +1,6 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
-
-app.use(express.json())
 
 let persons = [
   {
@@ -26,6 +25,10 @@ let persons = [
   }
 ]
 
+app.use(morgan('tiny'))
+
+app.use(express.json())
+
 app.get('/info', (request, response) => {
     response.send(`Phonebook has info for ${persons.length} people <br /> ${Date()}`)
 })
@@ -41,7 +44,9 @@ app.get('/api/persons/:id', (request, response) => {
   if (person) {
     response.json(person)
   } else {
-    response.status(404).end()
+    response.status(404).json({
+      error: 'person not found'
+    }).end()
   }
 })
 
@@ -78,6 +83,12 @@ app.post('/api/persons', (request, response) => {
   persons = persons.concat(person)
   response.json(person)
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = 3001
 app.listen(PORT)
