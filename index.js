@@ -41,7 +41,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id).then(result => {
-    response.status(204).end()
+      response.status(204).end()
   })
   .catch(error => next(error))
 })
@@ -72,6 +72,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint)
 
 const errorHandler = (error, request, response, next) => {
+  console.error(error.name)
   console.error(error.message)
 
   if (error.name === 'CastError') {
