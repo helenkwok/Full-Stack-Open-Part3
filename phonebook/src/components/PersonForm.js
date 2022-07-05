@@ -41,7 +41,6 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
           ...selectedPerson,
           number: newNumber
         }
-        console.log(changedPerson)
         personService
           .update(changedPerson)
           .then(
