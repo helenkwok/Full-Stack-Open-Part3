@@ -15,16 +15,19 @@ morgan.token('body', function (request, response) { return JSON.stringify(reques
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.get('/info', (request, response) => {
-    response.send(`Phonebook has info for ${persons.length} people <br /> ${Date()}`)
+app.get('/info', (request, response, next) => {
+    response
+    .send(`Phonebook has info for ${persons.length} people <br /> ${Date()}`)
+    .catch(error => next(error))
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
   Person
   .find({})
   .then(persons => {
     response.json(persons)
   })
+  .catch(error => next(error))
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -41,12 +44,16 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id).then(result => {
-      response.status(204).end()
+      if (result) {
+        response.status(204).end()
+      } else {
+        response.status(400).end()
+      }
   })
   .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
@@ -60,9 +67,11 @@ app.post('/api/persons', (request, response) => {
     number: body.number
   })
 
-  person.save().then(savedPerson => {
+  person.save()
+  .then(savedPerson => {
     response.json(savedPerson)
   })
+  .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
