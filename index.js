@@ -76,9 +76,15 @@ app.post('/api/persons', (request, response, next) => {
     number: body.number
   })
 
-  person.save()
-  .then(savedPerson => {
-    response.json(savedPerson)
+  Person.exists({ name: person.name })
+  .then(foundPerson => {
+    foundPerson?
+      response.status(400).send({ error: 'person already added' })
+    :
+      person.save()
+      .then(savedPerson => {
+        response.json(savedPerson)
+      })
   })
   .catch(error => next(error))
 })
