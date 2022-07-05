@@ -68,6 +68,22 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
               :
                 person
             ))
+            setMessage(`Updated ${changedPerson.data.name}`)
+            setMessageStyle(
+              {
+                marginBottom: 8,
+                padding: 8,
+                backgroundColor: 'lightgrey',
+                borderStyle: 'solid',
+                borderRadius: 4,
+                borderColor: 'green',
+                color: 'green'
+              }
+            )
+            setTimeout(() => {
+              setMessage(null)
+              setMessageStyle(null)
+            }, 5000)
           }).catch(error => {
             setMessage(error.response.data.error)
             setMessageStyle(
