@@ -11,14 +11,16 @@ app.use(cors())
 
 app.use(express.static('build'))
 
-morgan.token('body', function (request, response) { return JSON.stringify(request.body) })
+morgan.token('body', (request, response) => JSON.stringify(request.body))
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 app.get('/info', (request, response, next) => {
-    response
-    .send(`Phonebook has info for ${persons.length} people <br /> ${Date()}`)
-    .catch(error => next(error))
+  Person.estimatedDocumentCount()
+  .then(result => {
+    response.send(`Phonebook has info for ${result} people <br /> ${Date()}`)
+  })
+  .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response, next) => {
@@ -33,22 +35,20 @@ app.get('/api/persons', (request, response, next) => {
 app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
   .then(person => {
-    if (person) {
+    person?
       response.json(person)
-    } else {
-      response.status(404).end()
-    }
+    :
+      response.status(404).send({ error: 'unknown person' })
   })
   .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id).then(result => {
-      if (result) {
-        response.status(204).end()
-      } else {
-        response.status(400).end()
-      }
+    result?
+      response.status(204).end()
+    :
+      response.status(400).end()
   })
   .catch(error => next(error))
 })
@@ -62,10 +62,10 @@ app.put('/api/persons/:id', (request, response, next) => {
   }
 
   Person.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then(updatedPerson => {
-      response.json(updatedPerson)
-    })
-    .catch(error => next(error))
+  .then(updatedPerson => {
+    response.json(updatedPerson)
+  })
+  .catch(error => next(error))
 })
 
 app.post('/api/persons', (request, response, next) => {
