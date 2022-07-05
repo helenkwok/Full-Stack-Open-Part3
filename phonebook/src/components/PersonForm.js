@@ -15,8 +15,8 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
 
       personService
         .create(personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
+        .then(createdPerson => {
+          setPersons(persons.concat(createdPerson.data))
           setMessage(`Added ${newName}`)
           setMessageStyle(
             {
@@ -33,7 +33,24 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
             setMessage(null)
             setMessageStyle(null)
           }, 5000)
-      })
+        }).catch(error => {
+          setMessage(error.response.data.error)
+          setMessageStyle(
+            {
+              marginBottom: 8,
+              padding: 8,
+              backgroundColor: 'lightgrey',
+              borderStyle: 'solid',
+              borderRadius: 4,
+              borderColor: 'red',
+              color: 'red'
+            }
+          )
+          setTimeout(() => {
+            setMessage(null)
+            setMessageStyle(null)
+          }, 5000)
+        })
     } else {
       if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
         const selectedPerson = persons.find(person => person.name === newName)
@@ -41,16 +58,34 @@ const PersonForm = ({persons, setPersons, setMessage, setMessageStyle}) => {
           ...selectedPerson,
           number: newNumber
         }
+
         personService
           .update(changedPerson)
-          .then(
+          .then( changedPerson => {
             setPersons(persons.map(person =>
-              person.id === changedPerson.id ?
-                changedPerson
+              person.id === changedPerson.data.id ?
+                changedPerson.data
               :
                 person
             ))
-          )
+          }).catch(error => {
+            setMessage(error.response.data.error)
+            setMessageStyle(
+              {
+                marginBottom: 8,
+                padding: 8,
+                backgroundColor: 'lightgrey',
+                borderStyle: 'solid',
+                borderRadius: 4,
+                borderColor: 'red',
+                color: 'red'
+              }
+            )
+            setTimeout(() => {
+              setMessage(null)
+              setMessageStyle(null)
+            }, 5000)
+          })
       } else {
         alert(`${newName} is already added to phonebook`)
       }
